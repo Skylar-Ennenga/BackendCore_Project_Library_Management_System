@@ -8,7 +8,7 @@ class Book:
         self.author = author
         self.genre = genre
         self.pub_date= pub_date
-        self.__is_available = "Availible"
+        self.__is_available = True
 
          # getter
     def get_availability(self):
@@ -16,19 +16,19 @@ class Book:
     
     def set_availability(self):
         # if self.__is_available is Availible we set it to Borrowed
-        if self.get_availability() == "Availible":
-            self.__is_available = "Borrowed"
+        if self.get_availability():
+            self.__is_available = False
         # else self.__is_available is Borrowed we set it to Availible
         else:
-            self.__is_available = "Availible"
+            self.__is_available = True
         
     # method for borrowing a book
     def borrow_book(self):
         # if its available then we set use the setter to set it to the opposite which is False
-        if self.get_availability() == "Availible":
+        if self.get_availability():
             self.set_availability()
-            return "Availible" #returns True that we are able to borrow the book
-        return "Borrowed"
+            return True #returns Availible that we are able to borrow the book
+        return False
     
     def return_book(self):
         self.set_availability() #sets the availability back to true if its False

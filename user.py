@@ -41,7 +41,11 @@ class User:
     
     def generate_user_id(self):
         self.__user_id = random.randint(1000, 9999)
-        return self.__user_id
+    
+    def assign_book(self, book):
+        self.borrowed_books.append(book)
+        
+
 
 user1 = User("Skylar", "S@gmail.com")
 
