@@ -25,11 +25,10 @@
 
 from book import Book
 from user import User
-
+from author import Author
 
 def main():
     library = {} #this would be fine as a list too
-    current_loans = {}
     user_store = {}
     authors = {}
     while True:
@@ -49,7 +48,7 @@ def main():
         except ValueError:
             print("\nThats not a number! PLease choose a number between 1-4\n")
 
-def add_book(library):
+def add_book(library, authors):
     title = input("Enter the book's title: ")
     author = input("Enter the book's author: ")
     genre = input("Enter the book's genre: ")
@@ -57,9 +56,17 @@ def add_book(library):
         pub_date = int(input("Enter the the book's publication date: Use the year: "))
     except ValueError:
         print("Thats not a number please give the 4 digit year XXXX: ")
+    
     book = Book(title, author, genre, pub_date)
     library[title] = book #title is the key the value is the book object
-    print(library[title])
+    if author in authors:
+        new_list = [title, genre, pub_date]
+        authors[author].append([new_list])
+    else:
+        author = Author(author, [title, genre, pub_date])
+        authors[author] = author
+
+
 
 def search_book(library):
     title = input("What is the title you're looking for? ")
@@ -82,29 +89,45 @@ def check_out(library, user_store):
     title = input("Please enter the book you'd like to check out: ")
     user_id = int(input("Please enter the library ID: "))  # Convert user_id to int
     if user_id in user_store:
-            if title in library:
-                if library[title].borrow_book():
-                    user_id.assign_book(library[title])
-                    print(f"Book '{library[title].title}' has been checked out to {user_id.name}.")
-                else:
-                    print("Book is not available.")
+        user = user_store[user_id]  # Retrieve user object
+        if title in library:
+            if library[title].borrow_book():
+                user.assign_book(library[title])
+                print(f"Book '{library[title].title}' has been checked out to {user.name}.")
             else:
-                print("Book not found.")
+                print("Book is not available.")
+        else:
+            print("Book not found.")
     else:
         print("User not found.")
 
+def return_book (library, user_store):
+    user_id = int(input("Please enter the library ID: "))
+    title = input("Please enter the book you'd like to return: ")
+    if user_id in user_store:
+        user = user_store[user_id]
+        book = library[title]
+        if book and book in user.borrowed_books:
+            user.remove_book(book)
+            book.return_book()
+            print(f"Book '{book.title}' has been returned by {user.name}.")
+        else:
+            print("Book not found in user's borrowed list.")
+    else:
+        print("User not found.")
 
 def book_main(library, user_store, authors):
     while True:
         try:
             book_menu_choice = int(input("\nBook Operations: \n1. Add a new book \n2. Checkout a book \n3. Return a book \n4. Search for a book \n5. Display all books \n6. Return to Main Menu \n"))
             if book_menu_choice == 1:
-                add_book(library)
+                add_book(library, authors)
                 pass
             elif book_menu_choice == 2:
                 check_out(library, user_store)
                 pass
             elif book_menu_choice == 3:
+                return_book(library, user_store)
                 pass
             elif book_menu_choice == 4:
                 search_book(library)
@@ -129,7 +152,7 @@ def add_user(user_store):
     user.generate_user_id()
     user_id = user.get_user_id()
     user_store[user_id] = user #title is the key the value is the book object
-    print(f"{user.get_user_id()} ID has been assigned to the new user {user.name}")
+    print(f"{user.get_user_id()} ID has been assigned to the new user {user.name}. Keep it secret, keep it safe!")
     print(user_store)
 
 def search_user(user_store):
@@ -140,13 +163,14 @@ def search_user(user_store):
         print(user.get_user_id())
         print(user.name)
         print(user.get_user_email())
+        user.get_borrowed_books()
     else:
         print("Looks like that an incorect User")
 
 def display_users(user_store):
     for user in user_store.values():
-        print(f"User ID: {user.get_user_id()} \nUsername: {user.name} \nEmail: {user.get_user_email()} \nBooks checked out: {user.borrowed_books}\n")
-
+        print(f"User ID: {user.get_user_id()} \nUsername: {user.name} \nEmail: {user.get_user_email()} \nBooks checked out:")
+        user.get_borrowed_books()
 
 def user_main(user_store):
     while True:

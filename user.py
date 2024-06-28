@@ -44,6 +44,20 @@ class User:
     
     def assign_book(self, book):
         self.borrowed_books.append(book)
+    
+    def get_borrowed_books(self):
+        if self.borrowed_books:
+            for book in self.borrowed_books:
+                print(book.title)
+        else:
+            print("No books found")
+
+    def remove_book(self, book):
+        if book in self.borrowed_books:
+            self.borrowed_books.remove(book)
+        else:
+            print("Book not found in borrowed books.")
+    
         
 
 
