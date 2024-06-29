@@ -14,13 +14,10 @@
 # - X Displaying a list of all books with their unique identifiers.
 # - X Adding a new user with user details.
 # - X Viewing user details.
-# - Displaying a list of all users.
+# - X Displaying a list of all users.
 # - Adding a new author with author details.
 # - Viewing author details.
 # - Displaying a list of all authors.
-# - Adding a new genre with genre details.
-# - Viewing genre details.
-# - Displaying a list of all genres.
 # - Quitting the application.
 
 from book import Book
@@ -40,7 +37,7 @@ def main():
             elif main_menu_choice == 2:
                 user_main(user_store)
             elif main_menu_choice == 3:
-                author_main(authors)
+                author_main(authors, library)
             elif main_menu_choice == 4:
                 break
             else:
@@ -50,40 +47,47 @@ def main():
 
 def add_book(library, authors):
     title = input("Enter the book's title: ")
-    author = input("Enter the book's author: ")
-    genre = input("Enter the book's genre: ")
-    try:
-        pub_date = int(input("Enter the the book's publication date: Use the year: "))
-    except ValueError:
-        print("Thats not a number please give the 4 digit year XXXX: ")
-    
-    book = Book(title, author, genre, pub_date)
-    library[title] = book #title is the key the value is the book object
-    if author in authors:
-        new_list = [title, genre, pub_date]
-        authors[author].append([new_list])
+    if title not in library:
+        author_name = input("Enter the book's author: ")
+        genre = input("Enter the book's genre: ")
+        try:
+            pub_date = int(input("Enter the the book's publication date: Use the year: "))
+        except ValueError:
+            print("That's not a number, please give the 4-digit year XXXX: ")
+            return
+
+        book = Book(title, author_name, genre, pub_date)
+        library[title] = book # title is the key, the value is the book object
+
+        if author_name in authors:
+            new_list = [title, genre, pub_date]
+            authors[author_name].bio.append(new_list)
+        else:
+            author = Author(author_name, [[title, genre, pub_date]])
+            authors[author_name] = author
     else:
-        author = Author(author, [title, genre, pub_date])
-        authors[author] = author
+        print("Looks like that book is already in the library.")
 
 
 
-def search_book(library):
+def search_book(library, authors):
     title = input("What is the title you're looking for? ")
     if title in library:
         book = library[title]
-        print("Book found, here is some info: ")
-        print(book.title)
-        print(book.author)
-        print(book.genre)
-        print(book.pub_date)
-        print(book.get_availability())
+        for author in authors:
+            print("Book found, here is some info: ")
+            print(book.title)
+            print(author.name)
+            print(book.genre)
+            print(book.pub_date)
+            print(book.get_availability())
     else:
         print("Sorry! That book is not in our library.")
 
-def display_books(library):
+def display_books(library, authors):
     for book in library.values():
-        print(f"{book.title} by {book.author}: Genre: {book.genre}: Published: {book.pub_date} Availibility: {book.get_availability()}")
+        for author in authors.values():
+            print(f"{book.title} by {author.name} Genre: {book.genre} Published: {book.pub_date} Availibility: {book.get_availability()}")
 
 def check_out(library, user_store):
     title = input("Please enter the book you'd like to check out: ")
@@ -114,7 +118,7 @@ def return_book (library, user_store):
         else:
             print("Book not found in user's borrowed list.")
     else:
-        print("User not found.")
+            print("User not found.")
 
 def book_main(library, user_store, authors):
     while True:
@@ -130,10 +134,10 @@ def book_main(library, user_store, authors):
                 return_book(library, user_store)
                 pass
             elif book_menu_choice == 4:
-                search_book(library)
+                search_book(library, authors)
                 pass
             elif book_menu_choice == 5:
-                display_books(library)
+                display_books(library, authors)
                 pass
             elif book_menu_choice == 6:
                 break
@@ -152,25 +156,28 @@ def add_user(user_store):
     user.generate_user_id()
     user_id = user.get_user_id()
     user_store[user_id] = user #title is the key the value is the book object
-    print(f"{user.get_user_id()} ID has been assigned to the new user {user.name}. Keep it secret, keep it safe!")
-    print(user_store)
+    print(f"Library ID #{user.get_user_id()} has been assigned to the new user {user.name}. Keep it secret, keep it safe!")
 
 def search_user(user_store):
-    user_id = int(input("Please input the user ID that was assigned"))
-    if user_id in user_store:
-        user = user_store[user_id]
-        print("User Found, here is some info: ")
-        print(user.get_user_id())
-        print(user.name)
-        print(user.get_user_email())
-        user.get_borrowed_books()
-    else:
-        print("Looks like that an incorect User")
+    try:
+        user_id = int(input("Please enter your 4 digit Library ID #: "))
+        if user_id in user_store:
+            user = user_store[user_id]
+            print("User Found, here is some info: ")
+            print(user.get_user_id())
+            print(user.name)
+            print(user.get_user_email())
+            user.get_borrowed_books()
+        else:
+            print("Looks like that an incorect User")
+    except ValueError:
+        print("Thats not a number! Please Enter the 4 digit Library ID #: ")
 
 def display_users(user_store):
     for user in user_store.values():
-        print(f"User ID: {user.get_user_id()} \nUsername: {user.name} \nEmail: {user.get_user_email()} \nBooks checked out:")
+        print(f"User ID: {user.get_user_id()} Username: {user.name} Email: {user.get_user_email()} Books checked out:")
         user.get_borrowed_books()
+        
 
 def user_main(user_store):
     while True:
@@ -189,17 +196,66 @@ def user_main(user_store):
         except ValueError:
             print("\nThats not a number! PLease choose a number between 1-4\n")
 
+def add_author(authors, library):
+    author_name = input("Enter the an Author ")
+    for author in authors:
+        if author_name not in authors:
+            print("Now lets add a book to the authors BIO")
+            title = input("Enter the book's title: ")
+            genre = input("Enter the book's genre: ")
+            try:
+                pub_date = int(input("Enter the the book's publication date: Use the year: "))
+            except ValueError:
+                print("Thats not a number please give the 4 digit year XXXX: ")
+                return
+            
+            author = Author(author_name, [[title, genre, pub_date]])
+            authors[author_name] = author
 
-def author_main():
+            if title not in library:
+                book = Book(title, author, genre, pub_date)
+                library[title] = book
+            else: 
+                print("Looks like that book is already associated with that author.")
+
+        elif author in authors:
+            add_works = input("Looks like that author is already works bny that author would you like to add more? Yes or No")
+            if add_works == "yes":
+                title = input("Enter the book's title: ")
+                genre = input("Enter the book's genre: ")
+                try:
+                    pub_date = int(input("Enter the the book's publication date: Use the year: "))
+                except ValueError:
+                    print("Thats not a number please give the 4 digit year XXXX: ")
+                    return
+                
+                new_list = [title, genre, pub_date]
+                authors[author_name].bio.append(new_list)
+                
+                if title not in library:
+                    book = Book(title, author_name, genre, pub_date)
+                    library[title] = book
+                else:
+                    print("Looks like that book is already associated with that author.")
+
+            print("Looks like that Author is already in your Library")
+
+def display_authors(authors):
+    for author in authors.values():
+        print(f"User ID: {author.name} Username: {author.bio}")
+
+
+
+def author_main(authors, library):
     while True:
         try:
             book_menu_choice = int(input("\nAuthor Operations: \n1. Add a new author \n2. View author details \n3. Display all authors \n4. Return to Main Menu \n"))
             if book_menu_choice == 1:
-                pass
+                add_author(authors, library)
             elif book_menu_choice == 2:
                 pass
             elif book_menu_choice == 3:
-                pass
+                display_authors(authors)
             elif book_menu_choice == 4:
                 break
             else:
