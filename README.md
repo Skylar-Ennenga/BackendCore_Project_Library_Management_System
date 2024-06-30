@@ -34,9 +34,7 @@ To run the program:
    ```
 
 ## Requirements
-
 - Python 3.7 or higher
-
 ## Contributors
 
 - Skylar Ennenga
