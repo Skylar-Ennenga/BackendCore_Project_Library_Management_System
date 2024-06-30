@@ -33,6 +33,10 @@ class Book:
     def return_book(self):
         if self.set_availability() == "Borrowed": #sets the availability back to true if its False
             self.set_availability()
+    
+    def display_genre(self):
+        if self.genre == "Fantasy":
+            print
 
 
 book1 = Book("LOTR", "Tolkien", "Fantasy", 1928)
