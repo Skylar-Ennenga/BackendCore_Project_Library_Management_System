@@ -161,7 +161,7 @@ def search_user(user_store): # Function to search for a user
 
 def display_users(user_store): # Function to display all users
     for user in user_store.values(): # Loop through the users in the user_store dictionary
-        print(f"Library ID#{user.get_user_id()} Name: {user.name} Email: {user.get_user_email()} Books checked out:") # Print the user's library ID, name, email, and borrowed books
+        print(f"Library ID# {user.get_user_id()} Name: {user.name} Email: {user.get_user_email()} Books checked out:") # Print the user's library ID, name, email, and borrowed books
         user.get_borrowed_books()
         
 

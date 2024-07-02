@@ -15,32 +15,22 @@ class Book: #class for the book
         return self.__is_available
     
     def set_availability(self):
-        if self.get_availability() == "Availible": # if self.__is_available is Availible we set it to Borrowed
-            self.__is_available = "Borrowed"    # else self.__is_available is Borrowed we set it to Availible
+        if self.get_availability() == "Availible": # __is_availible is set to "Availible"
+            self.__is_available = "Borrowed"    #Set it to Borrowed
         else:
-            self.__is_available = "Availible" #returns the availability of the book
+            self.__is_available = "Availible" # If it is already set to borrowed set it back to "Availible"
         
     
     def borrow_book(self): # method for borrowing a book
         if self.get_availability() == "Availible": #checks if the book is availible
-            self.set_availability() #sets the availability to False
-            return True #returns True if the book is borrowed
-        return False #returns False if the book is not borrowed
+            self.set_availability() #sets the availability to Borrowed
+            return True # returns true that it can be baorrowed
+        return False #returns false if it cannot be borrowed
     
     def return_book(self): #method for returning a book
         if self.set_availability() == "Borrowed": #checks if the book is borrowed
-            self.set_availability() #sets the availability to True
+            self.set_availability() #sets the availability back to Availible
     
 
-
-# print(book1.get_availability())
-# print(book1.borrow_book())
-# print(book1.get_availability())
-# print(book1.return_book())
-# print(book1.get_availability())
-# print(book1.title)
-# print(book1.author)
-# print(book1.genre)
-# print(book1.pub_date)
 
 

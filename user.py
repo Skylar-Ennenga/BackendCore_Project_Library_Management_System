@@ -35,11 +35,3 @@ class User:
             print("Book not found in borrowed books.")
     
     
-        
-
-
-# user1 = User("Skylar", "S@gmail.com")
-
-# print(user1.generate_user_id())
-# print(user1.get_user_id())
-# print
